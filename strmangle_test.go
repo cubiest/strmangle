@@ -253,6 +253,8 @@ func TestTitleCase(t *testing.T) {
 		{"", ""},
 		{"418im_a_teapot", "418imATeapot"},
 		{"Slash/Test", "SlashTest"},
+		{"FOO/BAR", "FOO_BAR"},
+		{"PUBLIC_KEY", "PUBLIC_KEY"},
 		{"____a____a___", "AA"},
 		{"_a_a_", "AA"},
 		{"fun_id", "FunID"},
@@ -681,6 +683,7 @@ func TestParseEnum(t *testing.T) {
 		{"enum.wor_king('one','two')", "wor_king", []string{"one", "two"}},
 		{"enum('with space','two')", "", []string{"with space", "two"}},
 		{"enum('WithCapitalLetters','WITH_CAPS_AND_UNDERSCORES')", "", []string{"WithCapitalLetters", "WITH_CAPS_AND_UNDERSCORES"}},
+		{"enum('FOO/BAR')", "", []string{"FOO/BAR"}},
 	}
 
 	for i, test := range tests {
