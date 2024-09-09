@@ -253,17 +253,14 @@ func TrimLeftDigits(n string) string {
 // sanitizeForIdentifier expects a string to be used to generate an identifier.
 // Accordingly, this func replaces any characters that would create an invalid identifier with '_'.
 func sanitizeForIdentifier(n string) string {
-	var cleanN string
-	for _, r := range n {
-		var char string
-		if unicode.IsLetter(r) || unicode.IsDigit(r) {
-			char = string(r)
-		} else {
-			char = "_"
+	runes := []rune(n)
+	for i, r := range runes {
+		if !unicode.IsLetter(r) && !unicode.IsDigit(r) && r != '_' {
+			r = '_'
+			runes[i] = r
 		}
-		cleanN += char
 	}
-	return strings.TrimLeft(cleanN, "_") // Discard all leading '_'.
+	return strings.Trim(string(runes), "_") // Discard all leading and trailing '_'.
 }
 
 // TitleCaseFull is like TitleCase, but trims digits on the leftmost of the string.
@@ -304,13 +301,13 @@ func titleCase(n string, trimLeftDigits bool) string {
 	// If the string is made up of only uppercase letters and underscores,
 	// then return as is and do not strip the underscores
 	// This keeps strings such as PUBLIC_KEY readable and not make it PUBLICKEY
-	if len(n) == len(cleanN) && n == strings.ToUpper(n) {
+	if cleanN == strings.ToUpper(cleanN) {
 		// Cache the title case as the same string
 		mut.Lock()
-		titleCaseCache[n] = n
+		titleCaseCache[n] = cleanN
 		mut.Unlock()
 
-		return n
+		return cleanN
 	}
 
 	name := []byte(cleanN)
